@@ -182,10 +182,10 @@ def pull_data():
         # Format the date as yyyymmdd
         #first_day_of_the_week = seven_days_ago.strftime('%Y%m%d')
         #last_day_of_the_week = one_days_ago.strftime('%Y%m%d')
-        first_day_of_the_week = '20240331'
+        first_day_of_the_week = '20240421'
         converted_first_day_of_week = datetime.datetime.strptime(first_day_of_the_week,
                                 '%Y%m%d').strftime("%d %b %Y")
-        last_day_of_the_week = '20240406'
+        last_day_of_the_week = '20240427'
         converted_last_day_of_week = datetime.datetime.strptime(last_day_of_the_week,
                                 '%Y%m%d').strftime("%d %b %Y")
         first_day_of_week_specific_format = datetime.datetime(int(first_day_of_the_week[0:4]), int(first_day_of_the_week[4:6]), int(first_day_of_the_week[6:8]))
