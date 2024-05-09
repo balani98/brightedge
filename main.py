@@ -33,7 +33,6 @@ ACCOUNTS = Config.get("GENERAL", "ACCOUNTS")
 def get_account_name():
     print(ACCOUNTS)
     accounts_json = json.loads(ast.literal_eval(ACCOUNTS))
-    print(accounts_json)
     account_id_str = str(ACCOUNT_ID)
     account = accounts_json[account_id_str]
     return account
@@ -205,12 +204,12 @@ def pull_data(start_date_str,end_date_str):
                                 '%Y%m%d').strftime("%d %b %Y")
         first_day_of_week_specific_format = datetime.datetime(int(first_day_of_the_week[0:4]), int(first_day_of_the_week[4:6]), int(first_day_of_the_week[6:8]))
         week_of_the_year = get_week_of_the_year(first_day_of_the_week)
-        file_logger = setup_logging('Logs/log_'+week_of_the_year+'.log', logging.DEBUG)
+        file_logger = setup_logging('Logs/'+ account_name + '/'+'log_'+account_name + '_' + week_of_the_year+'.log', logging.DEBUG)
         file_logger.debug("Script execution has been started on time".format(start_time))
         
         
         week_no = week_of_the_year[-2:]
-        message="data pull is started for start date {} and last date {}".format(first_day_of_the_week,last_day_of_the_week)
+        message=account_name + " data pull is started for start date {} and last date {}".format(first_day_of_the_week,last_day_of_the_week)
         client.chat_postMessage(
             channel="kingfisher-data-pull-alerts", 
             text=message, 
@@ -223,10 +222,10 @@ def pull_data(start_date_str,end_date_str):
         file_logger.debug("total results for this domain for {} are {}".format(week_of_the_year,total_results_for_domain))
         print("total results needed", total_results_for_domain)
         results_domain_level=0
-        page_no=7
+        page_no=1
         
         while True:
-            rank = 62
+            rank = (page_no-1)*10
             total_results_for_page = get_total_number_of_keyword_results(file_logger, week_of_the_year, page_no)
             print("tot res", total_results_for_page)
             file_logger.debug("started the script for page {}".format(page_no))
@@ -273,14 +272,14 @@ def pull_data(start_date_str,end_date_str):
         
         # Display execution time
         print("Execution time:", execution_time, "seconds")
-        message="data pull is completed for start date {} and last date {}".format(first_day_of_the_week,last_day_of_the_week)
+        message= account_name + "data pull is completed for start date {} and last date {}".format(first_day_of_the_week,last_day_of_the_week)
         client.chat_postMessage(
            channel="kingfisher-data-pull-alerts", 
            text=message, 
            username="Bot User"
         )
     except Exception as error:
-        error_message = "data pull is failed due to "+ str(error)  +" for start date {} and last date {}".format(first_day_of_the_week,last_day_of_the_week)
+        error_message = account_name + " data pull is failed due to "+ str(error)  +" for start date {} and last date {}".format(first_day_of_the_week,last_day_of_the_week)
         print(error_message)
         client.chat_postMessage(
            channel="kingfisher-data-pull-alerts", 

@@ -11,7 +11,7 @@ from logger import setup_logging
 import logging
 def invoke_the_API():
     i=1
-    file_logger = setup_logging('Logs/overall_logs.log', logging.DEBUG)
+    file_logger = setup_logging('Logs/'+ account_name + '/' + account_name + '_'+'overall_logs.log', logging.DEBUG)
     start_date= datetime.datetime(2023, 1, 1)
     end_date = datetime.datetime(2023, 1, 7)
     for i in range(27):
