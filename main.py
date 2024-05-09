@@ -169,7 +169,7 @@ def get_keyword_results(logger,week_of_the_year, page_no, rank):
 
 
 
-def pull_data():
+def pull_data(start_date_str,end_date_str):
     try:
         # Start time
         start_time = time.time()
@@ -182,10 +182,12 @@ def pull_data():
         # Format the date as yyyymmdd
         #first_day_of_the_week = seven_days_ago.strftime('%Y%m%d')
         #last_day_of_the_week = one_days_ago.strftime('%Y%m%d')
-        first_day_of_the_week = '20240421'
+        #first_day_of_the_week = '20240114'
+        first_day_of_the_week = start_date_str
         converted_first_day_of_week = datetime.datetime.strptime(first_day_of_the_week,
                                 '%Y%m%d').strftime("%d %b %Y")
-        last_day_of_the_week = '20240427'
+        #last_day_of_the_week = '20240120'
+        last_day_of_the_week = end_date_str
         converted_last_day_of_week = datetime.datetime.strptime(last_day_of_the_week,
                                 '%Y%m%d').strftime("%d %b %Y")
         first_day_of_week_specific_format = datetime.datetime(int(first_day_of_the_week[0:4]), int(first_day_of_the_week[4:6]), int(first_day_of_the_week[6:8]))
@@ -219,7 +221,7 @@ def pull_data():
             
             results=0
             if total_results_for_page != 0:
-                while True:
+                while rank<=page_no*10+10:
                     file_logger.debug("started the script for page {} and rank {}".format(page_no,rank))
                     
                     df = pd.DataFrame()
@@ -240,7 +242,7 @@ def pull_data():
                         results_domain_level += results 
                         file_logger.debug("remaining records for page {} are {}".format(page_no, total_results_for_page-results))
                         print("remaining records for page {} are {}",page_no, total_results_for_page-results)
-                        if results ==  total_results_for_page or page_no*10==rank:
+                        if results ==  total_results_for_page:
                             break
                     rank = rank+1
                     time.sleep(5)
