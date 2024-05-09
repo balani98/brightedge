@@ -15,8 +15,9 @@ from logger import setup_logging
 import logging
 import configparser
 from slack_sdk import WebClient
+import ast
 from tenacity import retry, stop_after_attempt, wait_fixed, retry_if_exception_type
-BE_API_URL = 'https://api.brightedge.com/3.0/query/124009'
+BE_API_URL = 'https://api.brightedge.com/3.0/query/{}'
 
 Config = configparser.ConfigParser()
 Config.read('config.ini')
@@ -26,6 +27,16 @@ TABLE_ID = Config.get('GENERAL','TABLE_ID')
 USERNAME = Config.get('GENERAL','USERNAME')
 PASSWORD = Config.get('GENERAL','PASSWORD')
 SLACK_TOKEN =  Config.get('GENERAL','SLACK_TOKEN')
+ACCOUNT_ID =  Config.get('GENERAL','ACCOUNT_ID')
+ACCOUNTS = Config.get("GENERAL", "ACCOUNTS")
+
+def get_account_name():
+    print(ACCOUNTS)
+    accounts_json = json.loads(ast.literal_eval(ACCOUNTS))
+    print(accounts_json)
+    account_id_str = str(ACCOUNT_ID)
+    account = accounts_json[account_id_str]
+    return account
 
 # Set up a WebClient with the Slack OAuth token
 client = WebClient(token=SLACK_TOKEN)
@@ -121,9 +132,9 @@ def get_total_number_of_keyword_results(logger,week_of_the_year, page_no=None, r
     # Convert payload to JSON string
     payload_json = json.dumps(query)
     raw_text="query="+payload_json
-    response = requests.post(BE_API_URL, headers=headers, auth=(USERNAME, PASSWORD), data=raw_text,timeout=700.0)
+    response = requests.post(BE_API_URL.format(ACCOUNT_ID), headers=headers, auth=(USERNAME, PASSWORD), data=raw_text,timeout=700.0)
     # Raise excpetion only in case of 500 error.
-    if response.status_code == 503 or response.status_code == 504:
+    if response.status_code == 503 or response.status_code == 504 or response.status_code == 429:
         logger.debug("Try failed")
         response.raise_for_status()
         
@@ -158,8 +169,8 @@ def get_keyword_results(logger,week_of_the_year, page_no, rank):
     # Convert payload to JSON string
     payload_json = json.dumps(query)
     raw_text="query="+payload_json
-    response = requests.post(BE_API_URL, headers=headers, auth=(USERNAME, PASSWORD), data=raw_text,timeout=700.0)
-    if response.status_code == 503 or response.status_code == 504:
+    response = requests.post(BE_API_URL.format(ACCOUNT_ID), headers=headers, auth=(USERNAME, PASSWORD), data=raw_text,timeout=700.0)
+    if response.status_code == 503 or response.status_code == 504 or response.status_code == 429:
         logger.debug("Try failed")
         response.raise_for_status()
     #print("res",response.text)
@@ -171,6 +182,8 @@ def get_keyword_results(logger,week_of_the_year, page_no, rank):
 
 def pull_data(start_date_str,end_date_str):
     try:
+        # get account name
+        account_name = get_account_name()
         # Start time
         start_time = time.time()
         # Get today's date
@@ -210,10 +223,10 @@ def pull_data(start_date_str,end_date_str):
         file_logger.debug("total results for this domain for {} are {}".format(week_of_the_year,total_results_for_domain))
         print("total results needed", total_results_for_domain)
         results_domain_level=0
-        page_no=1
+        page_no=7
         
         while True:
-            rank = (page_no-1)*10
+            rank = 62
             total_results_for_page = get_total_number_of_keyword_results(file_logger, week_of_the_year, page_no)
             print("tot res", total_results_for_page)
             file_logger.debug("started the script for page {}".format(page_no))
@@ -235,7 +248,7 @@ def pull_data(start_date_str,end_date_str):
                         # create the new column time period
                         df_keyword["time_period"] = str(converted_first_day_of_week) + " to " + str(converted_last_day_of_week) + " Week ( " + str(week_no) + " )"
                         df_keyword["first_day_of_week"] = pd.to_datetime(first_day_of_week_specific_format)
-                        push_to_bq(df_keyword, PROJECT_ID, TABLE_ID, SERVICE_ACCOUNT)
+                        push_to_bq(df_keyword, PROJECT_ID, TABLE_ID + "_" + account_name, SERVICE_ACCOUNT)
                         file_logger.debug("pushed the results for rank page {} and rank {}".format(page_no, rank))
                         print("pushed the results for rank page {} and rank {}",page_no, rank)
                         results += kw_response['total']
@@ -274,4 +287,4 @@ def pull_data(start_date_str,end_date_str):
            text=error_message, 
            username="Bot User"
         )
-pull_data()
+pull_data('20231224','20231230')
