@@ -11,6 +11,7 @@ from logger import setup_logging
 import logging
 import json
 import ast
+from datetime import timedelta
 import configparser
 Config = configparser.ConfigParser()
 Config.read('config.ini')
@@ -41,8 +42,8 @@ def invoke_the_API():
         file_logger.debug("running for "+ start_date_str +  "and" + end_date_str )
         pull_data(start_date_str,end_date_str)
         file_logger.debug("finished for "+ start_date_str +  "and" + end_date_str )
-        start_date.add(days=7)
-        end_date.add(days=7)
+        start_date += timedelta(days=7)
+        end_date += timedelta(days=7)
         print(start_date,end_date)
         file_logger.debug("sleeping for a hour" )
         time.sleep(3600)
