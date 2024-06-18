@@ -277,18 +277,18 @@ def pull_data():
                 print("sleeping for 120 seconds after each page completion")
                 page_no = page_no + 1
                 print("end page", page_no)
-                end_time = time.time()
-                # Calculate execution time
-                execution_time = end_time - start_time
+            end_time = time.time()
+            # Calculate execution time
+            execution_time = end_time - start_time
         
-                # Display execution time
-                print("Execution time:", execution_time, "seconds")
-                message= account_name + " data pull is completed for start date {} and last date {} and search engine {}".format(first_day_of_the_week,last_day_of_the_week, search_engine)
-                client.chat_postMessage(
-                    channel="kingfisher-data-pull-alerts", 
-                    text=message, 
-                    username="Bot User"
-                    )
+            # Display execution time
+            print("Execution time:", execution_time, "seconds")
+            message= account_name + " data pull is completed for start date {} and last date {} and search engine {}".format(first_day_of_the_week,last_day_of_the_week, search_engine)
+            client.chat_postMessage(
+                channel="kingfisher-data-pull-alerts", 
+                text=message, 
+                username="Bot User"
+                )
     except Exception as error:
         error_message = account_name + " data pull is failed due to "+ str(error)  +" for start date {} and last date {} and search engine {}".format(first_day_of_the_week,last_day_of_the_week, search_engine)
         print(error_message)
