@@ -85,7 +85,7 @@ def get_total_number_of_keyword_results(logger,week_of_the_year, search_engine, 
         },
         "filter": [
             ["time", "eq", week_of_the_year],
-            ["search_engine",[[1,42]]],
+            ["search_engine",[search_engine]],
             ["search_volume","gt",50],
             ["is_my_domain","eq",1],
         ],
