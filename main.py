@@ -225,7 +225,7 @@ def pull_data():
                 )
             file_logger.debug("data pull is started for start date {} and last date {}".format(first_day_of_the_week,last_day_of_the_week))
             file_logger.debug("this data pull is started for week search_engine {}".format(week_of_the_year,search_engine))
-        
+            # domain level results
             total_results_for_domain =  get_total_number_of_keyword_results(file_logger, week_of_the_year,search_engine)
             file_logger.debug("total results for this domain for search_engine  {} {} are {} ".format(week_of_the_year, search_engine , total_results_for_domain))
             print("total results needed", total_results_for_domain)
@@ -233,6 +233,7 @@ def pull_data():
             page_no=1
             while True:
                 rank = (page_no-1)*10
+                # page level results
                 total_results_for_page = get_total_number_of_keyword_results(file_logger, week_of_the_year,search_engine,  page_no)
                 print("tot res", total_results_for_page)
                 file_logger.debug("started the script for page {}".format(page_no))
@@ -243,6 +244,7 @@ def pull_data():
                         file_logger.debug("started the script for page {} and rank {}".format(page_no,rank))
                     
                         df = pd.DataFrame()
+                        # rank level results
                         total_results_for_page_for_rank = get_total_number_of_keyword_results(file_logger, week_of_the_year, search_engine, page_no, rank)
                         file_logger.debug("Total results for page {} and rank {} are {}".format(page_no,rank,total_results_for_page_for_rank))
                     
