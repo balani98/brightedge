@@ -32,6 +32,22 @@ The script performs the following key actions:
    - **HTTP Errors**: 429 (Too Many Requests), 503 (Service Unavailable), 500 (Internal Server Error)
    - **Retries**: In case of errors, the script attempts to invoke the API up to **three times** before failing.
 
-
-
-
+### Deployment 
+If we have to deploy the same birghtedge connector for different account . This is the process we generally follow : 
+   - create an empty folder by that account name. 
+   - Clone the code from Github repository : https://github.com/Brainlabs-Digital/kingfisher-dashboards-BE-connector.git
+   - create the file by name `config.ini` and have the following details :
+   ```
+   [GENERAL]
+SERVICE_ACCOUNT=<path of Service account file of GCP Project>
+USERNAME=<Brightedge account username>
+PASSWORD=<Brightedge account password>
+PROJECT_ID=<Project ID of GCP project>
+TABLE_ID=<Table Id where data has to be stored>
+SLACK_TOKEN=<Slack token used to publish alerts>
+ACCOUNT_ID=<Account ID for which keywords data has to be pulled>
+GRANUALARITY_LEVEL=weekly
+ACCOUNTS= '{"124009":"BandQ","94906":"screwfix","142607":"tradepoint","285829":"BandQ_IE"}'
+```
+   - Create a empty folder `Logs` and inside thaty create the empty folder by `<ACCOUNT_NAME>`
+   - your scripts are ready to run . To check the manually `python main.py`
