@@ -33,21 +33,33 @@ The script performs the following key actions:
    - **Retries**: In case of errors, the script attempts to invoke the API up to **three times** before failing.
 
 ### Deployment 
-If we have to deploy the same birghtedge connector for different account . This is the process we generally follow : 
-   - create an empty folder by that account name. 
-   - Clone the code from Github repository : https://github.com/Brainlabs-Digital/kingfisher-dashboards-BE-connector.git
-   - create the file by name `config.ini` and have the following details :
-   ```
+
+If we need to deploy the same BrightEdge connector for different accounts, follow this process:
+
+1. **Create a new folder**:
+   - Create an empty folder named after the account.
+
+2. **Clone the repository**:
+   - Clone the code from the GitHub repository:  
+     [https://github.com/Brainlabs-Digital/kingfisher-dashboards-BE-connector.git](https://github.com/Brainlabs-Digital/kingfisher-dashboards-BE-connector.git)
+
+3. **Create the `config.ini` file**:
+   - Inside the new folder, create a file named `config.ini` with the following content:
+   ```ini
    [GENERAL]
-SERVICE_ACCOUNT=<path of Service account file of GCP Project>
-USERNAME=<Brightedge account username>
-PASSWORD=<Brightedge account password>
-PROJECT_ID=<Project ID of GCP project>
-TABLE_ID=<Table Id where data has to be stored>
-SLACK_TOKEN=<Slack token used to publish alerts>
-ACCOUNT_ID=<Account ID for which keywords data has to be pulled>
-GRANUALARITY_LEVEL=weekly
-ACCOUNTS= '{"124009":"BandQ","94906":"screwfix","142607":"tradepoint","285829":"BandQ_IE"}'
-```
-   - Create a empty folder `Logs` and inside thaty create the empty folder by `<ACCOUNT_NAME>`
-   - your scripts are ready to run . To check the manually `python main.py`
+   SERVICE_ACCOUNT=<path of Service account file of GCP Project>
+   USERNAME=<BrightEdge account username>
+   PASSWORD=<BrightEdge account password>
+   PROJECT_ID=<Project ID of GCP project>
+   TABLE_ID=<Table Id where data has to be stored>
+   SLACK_TOKEN=<Slack token used to publish alerts>
+   ACCOUNT_ID=<Account ID for which keywords data has to be pulled>
+   GRANULARITY_LEVEL=weekly
+   ACCOUNTS= '{"124009":"BandQ","94906":"screwfix","142607":"tradepoint","285829":"BandQ_IE"}'
+
+4. Create an empty folder `Logs` and inside that, create a subfolder named `<ACCOUNT_NAME>`.
+5. Your scripts are now ready to run. To run them manually, execute: `python main.py`.
+6. Now comes the scheduling part of the above script. Copy the path of `main.py` from the above folder, and open the crontab with `sudo crontab -e`. Add the following line at the end:
+
+  ```bash
+  * * * * * /usr/bin/python3 <path_to_main.py> >> <path_to_log_file> 2>&1
